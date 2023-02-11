@@ -27,11 +27,11 @@ function App() {
       <ShoppingCartProvider>
         <Container className="mb-4">
           <Routes>
-            {/* <Route element={<ProtectedRoutes />}> */}
-            <Route path="/store" element={[<Navbar />, <Store />]} />
-            <Route path="/about" element={[<Navbar />, <About />]} />
-            <Route path="/" element={[<Navbar />, <Home />]} />
-            {/* </Route> */}
+            <Route element={<ProtectedRoutes />}>
+              <Route path="/store" element={[<Navbar />, <Store />]} />
+              <Route path="/about" element={[<Navbar />, <About />]} />
+              <Route path="/" element={[<Navbar />, <Home />]} />
+            </Route>
             <Route path="*" element={<PageNotFound />} />
           </Routes>
         </Container>
