@@ -76,7 +76,9 @@ const CTA = () => (
     {/* <form action="#" method="post"> */}
     <form>
       <input type="email" placeholder="Your email address" />
-      <button type="submit">Sign up</button>
+      <button type="submit" id="submit_cta">
+        Sign up
+      </button>
     </form>
   </div>
 );
