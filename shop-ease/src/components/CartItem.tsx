@@ -1,38 +1,77 @@
-import { Button, Stack } from "react-bootstrap"
-import { useShoppingCart } from "../context/ShoppingCartContext"
-import mockedItems from "../data/mockedItems.json"
-import { formatCurrency } from "../utils/formatCurrency"
+import { Button, Stack } from "react-bootstrap";
+import { useShoppingCart } from "../context/ShoppingCartContext";
+import { formatCurrency } from "../utils/formatCurrency";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 type CartItemProps = {
-    id: number
-    quantity: number
+  id: number;
+  quantity: number;
+};
+
+interface ItemsProps {
+  id: number;
+  itemName: string;
+  price: number;
+  image: string;
+  stock: number;
 }
 
-export function CartItem({id, quantity} : CartItemProps) {
-    const { removeFromCart } = useShoppingCart()
-    const item = mockedItems.find(i => i.id === id)
+async function getItems() {
+  const accessToken = localStorage.getItem("accessToken");
+  const res = await axios.get("https://localhost:7232/api/store/items", {
+    headers: {
+      Authorization: "Bearer " + accessToken,
+    },
+  });
 
-    console.log(quantity)
+  return res.data;
+}
 
-    if (item == null) return null
+export function CartItem({ id, quantity }: CartItemProps) {
+  const [items, setItems] = useState<ItemsProps[]>();
 
-    return (
-        <Stack direction="horizontal" gap={2} 
-        className="d-flex align-items-center">
-            <img src={item.imgUrl} style={{width: "125px", height:"75px", objectFit:"cover"}} />
-            <div className="me-auto">
-                <div>
-                    {item.name}{" "} 
-                    {quantity > 1 && (
-                    <span className="text-muted" style={{fontSize:"0.78rem"}}>x{quantity}</span>
-                    )}
-                </div>
-                <div className="text-muted" style={{fontSize:"0.78rem"}}>
-                    {formatCurrency(item.price)}
-                </div>
-            </div>
-            <div>{formatCurrency(item.price * quantity)}</div>
-            <Button variant="outline-danger" size="sm" onClick={() => removeFromCart(item.id)}>&times;</Button>
-        </Stack>
-    )
+  useEffect(() => {
+    async function fetchData() {
+      const items = await getItems();
+      setItems(items);
+    }
+    fetchData();
+  }, []);
+
+  const { removeFromCart } = useShoppingCart();
+  if (items == null) return null;
+  const item = items.find((i) => i.id === id);
+
+  if (item == null) return null;
+
+  return (
+    <Stack direction="horizontal" gap={2} className="d-flex align-items-center">
+      <img
+        src={item.image}
+        style={{ width: "125px", height: "75px", objectFit: "cover" }}
+      />
+      <div className="me-auto">
+        <div>
+          {item.itemName}{" "}
+          {quantity > 1 && (
+            <span className="text-muted" style={{ fontSize: "0.78rem" }}>
+              x{quantity}
+            </span>
+          )}
+        </div>
+        <div className="text-muted" style={{ fontSize: "0.78rem" }}>
+          {formatCurrency(item.price)}
+        </div>
+      </div>
+      <div>{formatCurrency(item.price * quantity)}</div>
+      <Button
+        variant="outline-danger"
+        size="sm"
+        onClick={() => removeFromCart(item.id)}
+      >
+        &times;
+      </Button>
+    </Stack>
+  );
 }

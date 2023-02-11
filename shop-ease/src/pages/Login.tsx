@@ -1,7 +1,9 @@
+import { Auth } from "../components/Auth";
+
 export function Login() {
-    return (
-        <>
-            <h2>Login</h2>
-        </>
-    )
+  return (
+    <>
+      <Auth isLoginPage={true} />
+    </>
+  );
 }
